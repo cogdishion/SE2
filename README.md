@@ -46,11 +46,11 @@ By default SE2 returns disjoint communities, but you can enable varying levels o
 Subclustering - 
 Occasionally your data will have multiple scales, or large batch effects that might look like clusters, and you need to get underneath them for meaningful results.  (Often the case for bulk RNAseq, but generally not single cell RNAseq)
 You can apply SpeakEasy2 to each of the top-tier clusters with subcluster.  This may be done multiple times if you wish (i.e. sub-sub clustering).
-   For instance, >>SpeakEasy2(ADJdemo,’subcluster’, 3) produces three levels of clustering - the usual top-level clusters, as well as sub-clusters and sub-sub clusters.  You can access lower levels of clusters as follows:
-  >> load SpeakEasy2_results
-partition_tags{1}; %these are the top-level communities
-partition_tags{2}; %sub clusters
-partition_tags{3}; %sub-sub clusters
+   For instance, >>SpeakEasy2(ADJdemo,’subcluster’, 3) produces three levels of clustering - the usual top-level clusters, as well as sub-clusters and sub-sub clusters.  You can access lower levels of clusters as follows:<br />
+  >> load SpeakEasy2_results <br />
+partition_tags{1}; %these are the top-level communities <br />
+partition_tags{2}; %sub clusters <br />
+partition_tags{3}; %sub-sub clusters <br />
 
 You may not wish to split communities below a certain size, which is facilitated by minclust.  For instance >>SpeakEasy2(ADJdemo,’subcluster’, 3,’minclust’,20) will not subcluster primary clusters with less than 20 nodes.
 
@@ -61,12 +61,12 @@ If you wish to access the partition without loading a saved file, you can run a 
 load ADJdemo
 [node_tags  node_groups convenient_order]=SpeakEasy2(ADJ);
 
-In this case node_tags{1} will contain two columns - the first is the node ID and the 2nd is an arbitrary numeric cluster assignment.  For instance (hypothetically) it could contain:
-1 1
-2 1
-3 2 
-4 3
-5 3
+In this case node_tags{1} will contain two columns - the first is the node ID and the 2nd is an arbitrary numeric cluster assignment.  For instance (hypothetically) it could contain: <br />
+1 1 <br />
+2 1 <br />
+3 2 <br />
+4 3 <br />
+5 3 <br />
 
 -the first output matrix ('node_tags') above denotes a 5-node network, with three clusters.
 
