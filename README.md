@@ -8,7 +8,7 @@ At the matlab prompt type… <br />
 SpeakEasy2(ADJ) <br />
 You’ve clustered some data!  You’ll see results have been saved in the folder as SpeakEasy2_results.mat.  If you’d like to verify that SpeakEasy2 is producing plausible results, copy this into the matlab terminal:
 
-load SpeakEasy2_results
+load SpeakEasy2_results <br />
 figure('Position',[0 0 1000 400]) <br />
 subplot(1,2,1); imagesc(ADJ) <br />
 title('original input ADJ') <br />
