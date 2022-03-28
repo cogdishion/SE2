@@ -61,7 +61,7 @@ You may not wish to split communities below a certain size, which is facilitated
 I/O -
 If you wish to access the partition without loading a saved file, you can run a command with 1-3 outputs:
 
-load ADJdemo
+load ADJdemo <br />
 [node_tags  node_groups convenient_order]=SpeakEasy2(ADJ);
 
 In this case node_tags{1} will contain two columns - the first is the node ID and the 2nd is an arbitrary numeric cluster assignment.  For instance (hypothetically) it could contain: <br />
