@@ -4,8 +4,8 @@ Tested under 2018b.  Parallel toolbox not required, but helpful for large datase
 
 To cluster data, 
 Download SpeakEasy2: Champagne, navigate to the SpeakEasy2 folder in matlab (or put it on your matlab path) and type: <br />
-load ADJdemo
-At the matlab prompt type… <br />
+load ADJdemo %at the matlab prompt to load an example network.  <br />
+Then run SpeakEasy2 by typing… <br />
 SpeakEasy2(ADJ) <br />
 You’ve clustered some data!  You’ll see results have been saved in the folder as SpeakEasy2_results.mat.  If you’d like to verify that SpeakEasy2 is producing plausible results, copy this into the matlab terminal:
 
