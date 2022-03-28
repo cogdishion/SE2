@@ -1,5 +1,6 @@
 
 Instructions for clustering networks with SpeakEasy2:Champagne
+Tested under 2018b.  Parallel toolbox not required, but helpful for large datasets.
 
 To cluster data, 
 Download SpeakEasy2: Champagne
