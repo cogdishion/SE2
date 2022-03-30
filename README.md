@@ -22,6 +22,7 @@ xlabel('reordered nodes') <br />
 ylabel('reordered nodes') <br />
 colormap(cmap); <br />
 
+![test](SE2_example_results.jpg)
 
 On the left you can see the randomly arranged network input to SE2, while the image on the right shows the same data arranged according to the clusters found by SE2.  You can see that nodes have been organized into groups (along the diagonal).  These have been color-coded with the ground truth communities, and you can see in most cases the original communities are received (nodes in a group tend to be the same color).
 
