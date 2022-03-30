@@ -1,3 +1,5 @@
+%called by discrete_nmi.m
+
 function h = entropy(varargin)
     if length(varargin) == 1
         h = entropySolo(varargin{1});

@@ -1,4 +1,8 @@
-%returns the sets of indices for each unique value in a matrix (first output).
+%called by SpeakEasy2_core and used to assign sequential numeric values to
+%the labels (which probably have holes i.e. [4 6 9 9] becomes [1 2 3 3] (in
+%the 2nd output of this function))
+%
+%More generally, this returns the sets of indices for each unique value in a matrix (first output).
 %also can take a list of integers and relabels them so they start with 1 and are
 %sequential (2nd output). 
 %also you might want to realign labels in secondary_labels_ID in sync with
@@ -10,33 +14,29 @@ function [list_in_cells list_renumbered cell_contents_value varargout]=splitlist
 if min(size(original_list))~=1
     error('only works when first input is a row or column')
 end
+original_list=(original_list(:))'; %make input a row
 
-original_list=(original_list(:))';
 
-if length(varargin)==1
+if length(varargin)==1  %generally not used, so skip ahead to understand core use
     another_matrix_to_adjust=varargin{1};
     
     [row_w_no_values col_w_no_values]=find(another_matrix_to_adjust==0);  %because sometimes we coulnd't generate an n-best secondary solution, so there are unused rows in 'another_matrix_to_adjust' from SpeakEasy2_core.m filled with zeros
     another_matrix_to_adjust(1:max(row_w_no_values),:)=[];
     
-    
-    
+   
     another_matrix_to_adjust_unique=unique(another_matrix_to_adjust(:));
     if length(find(ismember(another_matrix_to_adjust_unique,original_list)==1))~=length(another_matrix_to_adjust_unique)
         error('serious problem in multicom where you have a secondary label for a node not among the primary labels')
-    end
-    
+    end   
     original_and_another=cat(1, original_list,another_matrix_to_adjust);
     
-    
-    
+      
     [source_labels label_indices]=sort(original_and_another(:)');
     shift_in_label_list=find([source_labels(2:end)-source_labels(1:end-1)  ]~=0);
     shift_in_label_list=[0 shift_in_label_list length(source_labels)];
     
     combined_list_renumbered=zeros(size(another_matrix_to_adjust,1)+1,size(another_matrix_to_adjust,2));
     for sink_labels=1:length(shift_in_label_list)-1
-        %list_in_cells{sink_labels}= label_indices(shift_in_label_list(sink_labels)+1:shift_in_label_list(sink_labels+1))  ;
         combined_list_renumbered(label_indices(shift_in_label_list(sink_labels)+1:shift_in_label_list(sink_labels+1)))=sink_labels;
     end
     
@@ -46,16 +46,15 @@ if length(varargin)==1
 end
 
 
+%focus on this
 [source_labels label_indices]=sort(original_list);
 shift_in_label_list=find([source_labels(2:end)-source_labels(1:end-1)  ]~=0);
 shift_in_label_list=[0 shift_in_label_list length(source_labels)];
 
 list_renumbered=zeros(size(original_list));
 list_in_cells=cell(1,length(shift_in_label_list)-1);
-length(shift_in_label_list);
 for sink_labels=1:length(shift_in_label_list)-1
 
-    
     list_in_cells{sink_labels}=label_indices(shift_in_label_list(sink_labels)+1:shift_in_label_list(sink_labels+1))  ;
     list_renumbered(list_in_cells{sink_labels})=sink_labels;
 

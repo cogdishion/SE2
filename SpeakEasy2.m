@@ -38,7 +38,6 @@ addOptional(options,'timesteps',100);     %no longer matters as it did in origin
 addOptional(options,'subcluster_split',2)  %when bubbling, split clusters into this many parts - can be several more, but doesn't really matter - probably remove
 addOptional(options,'contiguous_labels',0)  % set to 1 forces all communities to be connected - sounds like something you want, but generall not really worth it/needed
 addOptional(options,'discard_transient',3)  %disregard the first few solutions that are not at equilibrium
-addOptional(options,'data_check',1);     %makes sure ADJ is in range [-1 1] and no NaN's etc.  You can turn this off (0) if you want to save a bit of time.
 
 %these merely affect how we do the clustering, but not the result
 addOptional(options,'max_threads',0);        %you need the parallel package for this - will create copies of the ADJ and run in parallel, so be sure you have enough memory
