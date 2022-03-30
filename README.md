@@ -1,4 +1,4 @@
-Want to cluster data or networks reliably and accurately?  Try this method, designed to handle a range of data without parameter tweaking. <br />
+Looking to cluster data or networks reliably and accurately?  Because data and networks vary so widely, we designed a method to handle a range of data without parameter tweaking. <br />
 <br />
 Instructions for clustering networks with SpeakEasy2: Champagne. 
 Tested under 2018b.  Parallel toolbox not required, but helpful for large datasets.
