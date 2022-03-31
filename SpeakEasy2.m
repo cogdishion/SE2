@@ -27,8 +27,7 @@ options.CaseSensitive = false;
 addOptional(options,'filename','SpeakEasy2_results')
 addOptional(options,'independent_runs',10);   %number of completely independent initil conditions (IC's)
 addOptional(options,'subcluster',1);           %if you want to sub-cluster your primary clusters, make this 2+
-addOptional(options,'overlapping',[]);     %overlto be deleted - virtual_cooc for SE_clasic  apping partitions, if value in [0 1 ];  empty means discrete clusters
-addOptional(options,'multicommunity',1)  %rename after testing... should be equalt to max number of communities per node (so will be 2 or greater if you want overlapping output
+addOptional(options,'multicommunity',1)  %rename after testing... should be equal to max number of communities per node (so will be 2 or greater if you want overlapping output
 addOptional(options,'target_partitions',5);
 addOptional(options,'target_clusters',max([min([10 length(ADJ)]) round(length(ADJ)/100)]));  %if you enable bubbling and run long enough this doesn't matter
 
@@ -97,7 +96,7 @@ for main_iter=1:options.Results.subcluster   %main loop over clustering / subclu
         
         if options.multicommunity==1
             disp('Alert - you set the multicom option equal to 1 - this will NOT enable overlapping community detection.')
-            disp('If you want to do that select an integer greater than 1, equal to the # community a node may belong  to')
+            disp('If you want to do that select an integer greater than 1, equal to the # community a node may belong to')
         end
         
     end

@@ -65,7 +65,7 @@ median_cluster_size=[]; %for each time point counts medians size of all clusters
 
 
 
-i=1; %counter for main loop, which continues until generating the target_paritions # of solutions (aka clusters aka partitions)
+i=1; %counter for main loop, which continues until generating the target_paritions # of solution states ( aka partitions)
 while size(postintervention_state,1) < (options.target_partitions +options.discard_transient )%&&post_peak_split_counter<=  %main label updating loop
     tic;
     
@@ -155,22 +155,23 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
     
     if do_typical==1
         
-        %'actual_counts' contains have signed number of total receipts of each label, so if you have 5 positive incoming connections from label #2, and 4 negative inputs for label#2, actual_counts of label #2 will ==1
+        %"actual_counts" contains have signed number of total receipts of each label, so if you have 5 positive incoming connections from label #2, and 4 negative inputs for label#2, actual_counts of label #2 will ==1
         [actual_counts active_labels]=actual_label_counts(ADJ,listener_history(i-1,:),options); %actual_counts is sparse for sparse input
         expected_counts=expected_label_counts(actual_counts,kin,0);%seems was set to 1 for lfr testing %set param ==1 for fullADJ increases speed... pretty much makes sense   %last parameter ==0  means expected ONLY for labels received by a given node (faster than providing expected values for all labels, including ones a node never hears)
-        act_less_exp=(actual_counts-expected_counts);
-        [best_act_less_exp_score idx_best_label]=max(act_less_exp,[],1);
-        listener_history(i,nodes_to_update)= active_labels(idx_best_label(nodes_to_update));
-        score_history(i,nodes_to_update)=best_act_less_exp_score(nodes_to_update);
-        
-        [active_labels act_less_exp]=adjust_for_ignored_labels(listener_history(i,:),active_labels,act_less_exp);  %this line matters a lot
+        actual_minus_expected=(actual_counts-expected_counts);
+        [best_actual_minus_expected_score idx_best_label]=max(actual_minus_expected,[],1);
+        listener_history(i,nodes_to_update)= active_labels(idx_best_label(nodes_to_update));  %non-updated nodes retain prior labels (listener_history(i,:) set to listener_history(i-1,:) higher up in fx)
+        score_history(i,nodes_to_update)=best_actual_minus_expected_score(nodes_to_update);
+
+        [active_labels actual_minus_expected]=adjust_for_ignored_labels(listener_history(i,:),active_labels,actual_minus_expected);  %this line matters a lot
         %Explaination of why the line above and the "adjust_for_ignored_labels" function matters a lot:
-        %we generate updated labels for all nodes, but we only apply some
-        %of them, selected by 'to_update_pseudo'.
-        %Some labels may carry over from the pervious timestep but never appear in
-        %active_labels -i.e. it will have more unique elements than listener_history(i,:), although
-        %listener_history will have some labels that don't appear in
+        %Reason #1: we generate updated labels for all nodes, but we only apply some
+        %of them, selected by 'to_update_pseudo'. That means some labels may carry over from the previous timestep but never appear in
+        %active_labels -i.e. listener_history will have some labels that don't appear in
         %"active_labels", because nodes with those labels were not updated      
+        %
+        %Reason #2: (and this is more common and has a bigger effect -  when you bubble you're introducing new labels that
+        %weren't there at the previous time-step. 
         
     end  %end do_typical
     
@@ -193,15 +194,15 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
         
         %only update some labels
         percentile_cut_point=.9;  % if this value is .9 means we DO NOT update the top 10% most secure nodes i.e. those with clear label selection
-        percentile_marker=sort(best_act_less_exp_score);
+        percentile_marker=sort(best_actual_minus_expected_score);
         percentile_marker=percentile_marker(ceil(length(percentile_marker)*percentile_cut_point));
-        low_fit_nodes_all= find(best_act_less_exp_score<percentile_marker ) ;
+        low_fit_nodes_all= find(best_actual_minus_expected_score<percentile_marker ) ;
         
-        if length(low_fit_nodes_all)==0  %sometimes , in small clusters or subclusters, you can get ties in "best_act_less_exp_score" such that all or no nodes end up in "low_fit_nodes_all"
+        if length(low_fit_nodes_all)==0  %sometimes , in small clusters or subclusters, you can get ties in "best_actual_minus_expected_score" such that all or no nodes end up in "low_fit_nodes_all"
             
             %in this case we just arbitrarily assign some nodes to be low or high fit.  Ratio doesn't seem to matter.  Could also just update all nodes.
             %disp('all nodes end uphigh selected')
-%            low_fit_nodes_all=randsample(1:length(ADJ),ceil(length(ADJ)/2),1); %original, but calls randperm from stats toolbox
+%            low_fit_nodes_all=randsample(1:length(ADJ),ceil(length(ADJ)/2),1); %original, but calls randsample from stats toolbox
             low_fit_nodes_all=randperm(length(ADJ));
             low_fit_nodes_all=low_fit_nodes_all(1:ceil(length(ADJ)/2));
             high_fit_nodes_all=1:length(ADJ); %faster this way than setdiff
@@ -213,23 +214,23 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
             %since high_fit_nodes are relatively rare in future update might be slightly faster to select them at first
         end
         
-        %reiterating the above - sometimes you get many similar values in best_act_less_exp_score - so when you
+        %reiterating the above - sometimes you get many similar values in best_actual_minus_expected_score - so when you
         %take the nth percentile value as opposed to the nth value by idx
         %you can either put everything in low_fit_nodes_all (using <) or
-        %everything if <=.  If you put nothing in, then
+        %nothing if <=.  If you put nothing in, then
         %high_fit==length(adj) and all nodes get removed in
-        %actual_label_counts and you get and empty return
+        %actual_label_counts and you get an empty return and errors
         
         kin_limited_alt=kin-sum(ADJ(high_fit_nodes_all,:));
         [actual_counts active_labels]=actual_label_counts(ADJ,listener_history(i-1,:),options,high_fit_nodes_all); %actual_counts is sparse for sparse input
         expected_counts=expected_label_counts(actual_counts,kin_limited_alt,0);%seems was set to 1 for lfr testing %set param ==1 for fullADJ increases speed... pretty much makes sense   %last parameter ==0  means expected ONLY for labels received by a given node (faster than providing expected values for all labels, including ones a node never hears)
-        act_less_exp=(actual_counts-expected_counts);
-        [best_act_less_exp_score idx_best_label]=max(act_less_exp,[],1);     
+        actual_minus_expected=(actual_counts-expected_counts);
+        [best_actual_minus_expected_score idx_best_label]=max(actual_minus_expected,[],1);     
         listener_history(i,nodes_to_update)= active_labels(idx_best_label(nodes_to_update));
-        score_history(i,nodes_to_update)=best_act_less_exp_score(nodes_to_update);
+        score_history(i,nodes_to_update)=best_actual_minus_expected_score(nodes_to_update);
         
         listener_history(i,high_fit_nodes_all)=listener_history(i-1,high_fit_nodes_all);   %we DO NOT take updated labels for high_fit_nodes_all aka nodes with strong label selection    
-        [active_labels act_less_exp]=adjust_for_ignored_labels(listener_history(i,:),active_labels,act_less_exp);  %this line matters a lot fore reasons stated in paragraph in do_typical       
+        [active_labels actual_minus_expected]=adjust_for_ignored_labels(listener_history(i,:),active_labels,actual_minus_expected);  %this line matters a lot fore reasons stated in paragraph in do_typical       
         
     end
     
@@ -260,7 +261,7 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
         median_cluster_size(end+1)=median(cellfun(@length,label_unq_loc));  % NOT just diagnostic - used to determine how much to split big clusters
         prior_biggest_label=max(listener_history(i,:));
         
-        percentile_marker_bubble=sort(best_act_less_exp_score);  %we get best_act_less_exp_score from when it is computed in do_nuture stage
+        percentile_marker_bubble=sort(best_actual_minus_expected_score);  %we get best_actual_minus_expected_score from when it is computed in do_nuture stage
         percentile_cut_point_bubble=.9;  %if value is ==.9 we're going to select nodes in the lowes 90% of maxval_values and split them into new clusters
         percentile_marker_bubble=percentile_marker_bubble(ceil(length(percentile_marker_bubble)*percentile_cut_point_bubble));
         
@@ -268,7 +269,7 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
         for k=1:length(labels_unq)
             if length(label_unq_loc{k})>4  %don't split small clusters - tried also filtering based on cluster density and didn't help
                 
-                low_fit_nodes=label_unq_loc{k}(  find(best_act_less_exp_score(label_unq_loc{k})  <=percentile_marker_bubble  ));
+                low_fit_nodes=label_unq_loc{k}(  find(best_actual_minus_expected_score(label_unq_loc{k})  <=percentile_marker_bubble  ));
                 low_fit_nodes_all=[low_fit_nodes_all; low_fit_nodes'];
                 
                 if length(low_fit_nodes)>0
@@ -329,12 +330,12 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
         actual_by_group_compare=[actual_label_counts(actual_counts',listener_history(i,:),options)]';
         expected_by_group_compare=expected_label_counts(actual_by_group_compare,sum(actual_by_group_compare),0);%note last param=0 is the low ram version
         
-        act_less_exp_group=actual_by_group_compare-expected_by_group_compare;
-        act_less_exp_group_diag=diag(act_less_exp_group);
-        act_less_exp_group(1:length(act_less_exp_group)+1:numel(act_less_exp_group))=-Inf;    %diagonal contains within label connections, which are not relevant to merging
-        [merge_target_val merge_target_idx]=max(act_less_exp_group,[],1);  %get the best non-self community
+        actual_minus_expected_group=actual_by_group_compare-expected_by_group_compare;
+        actual_minus_expected_group_diag=diag(actual_minus_expected_group);
+        actual_minus_expected_group(1:length(actual_minus_expected_group)+1:numel(actual_minus_expected_group))=-Inf;    %diagonal contains within label connections, which are not relevant to merging
+        [merge_target_val merge_target_idx]=max(actual_minus_expected_group,[],1);  %get the best non-self community
         %the "keyvals" matrix below is holding stats that determine which clusters will be merged
-        keyvals=sortrows([merge_target_val(:) merge_target_idx(:) [1:length(merge_target_val)]' act_less_exp_group_diag(merge_target_idx(:))  act_less_exp_group_diag],-1  );  %ranks labels  with most overlap
+        keyvals=sortrows([merge_target_val(:) merge_target_idx(:) [1:length(merge_target_val)]' actual_minus_expected_group_diag(merge_target_idx(:))  actual_minus_expected_group_diag],-1  );  %ranks labels  with most overlap
         %col2 of keyvals is the idx of best merge partner
         %col3 of keyvals is just a list of sequential indices used to references all labels - basically the idx of the listening labels
         
@@ -362,7 +363,7 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
             
             
             if options.multicommunity>1   %store some suboptimal labels
-                [temp_label_scores  temp_label_ID] =sort(act_less_exp,1);
+                [temp_label_scores  temp_label_ID] =sort(actual_minus_expected,1);
                 possible_multicom_labels=min([options.multicommunity size(temp_label_scores,1)])-1;
                 secondary_labels_scores(end-possible_multicom_labels :end,:,subop_tracker)=      temp_label_scores(end-possible_multicom_labels :end,:);
                 secondary_labels_ID    (end-possible_multicom_labels :end,:,subop_tracker)=active_labels(temp_label_ID(end-possible_multicom_labels :end,:));
@@ -395,7 +396,7 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
                 
                 
                 if options.multicommunity>1   %store some suboptimal labels
-                    [ temp_label_scores  temp_label_ID] =sort(act_less_exp,1);
+                    [ temp_label_scores  temp_label_ID] =sort(actual_minus_expected,1);
                     
                     possible_multicom_labels=min([options.multicommunity size(temp_label_scores,1)])-1;
                     secondary_labels_scores(end-possible_multicom_labels :end,:,subop_tracker)=      temp_label_scores(end-possible_multicom_labels :end,:);

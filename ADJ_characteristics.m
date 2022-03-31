@@ -86,11 +86,6 @@ if length(ADJ)<1000
    
    
 else  %on a larger matrix, samples some points.... one worry is that on ultra sparse matrices,this will say it is symmetric by just finding a bunch of zeros
-   
-   % randrow=ceil(length(ADJ)*rand(1,5000));
-   % randcol=ceil(length(ADJ)*rand(1,5000));
-   % ADJ_subset=ADJ((randrow-1)*length(ADJ)+randcol)-ADJ((randcol-1)*length(ADJ)+randrow);
-   % if mean(abs(ADJ_subset))<.0001
 
   randrowcol=ceil(rand(1,1000)*length(ADJ));
     ADJ_subset=ADJ(randrowcol,randrowcol);
@@ -162,29 +157,3 @@ function output= skewns(x)
 
 output=(sum((x-mean(x)).^3)./length(x)) ./ (var(x,1).^1.5);
 end
-
-% 
-%     if length(ADJ)<max_ADJ_size        %if matrix is small enough that we could use full multiplicationn
-%         
-%         if ADJ_density>.03             %do not change this value; this value was selected by observing the two multiplication strategies it switches between require equal time at .03 density
-%             
-%             memory_efficient=0;         %ADJ dense enough that full mult is faster than pairwise (and small enough it will fit in memory)
-%         else
-%             if ~issparse(ADJ)
-%             ADJ=sparse(ADJ);
-%             end
-%             memory_efficient=1;    %'ultrasparse and small ADJ, so pairwise multi is faster'
-%         end
-%         
-%     else
-%         if ADJ_density<=.03  %you still might want ADJ sparse if it's huge and RAM usage is an issue, but hoping the user handles that
-%             memory_efficient=1;
-%             
-%         else
-%             memory_efficient=0; %if you have a huge matrix is still may be wise to put it as sparse even if density >.03.  .03 is the point at which it becomes faster to compute with a full, but you may need to convert to sparse simply for memory reasons
-%             
-%         end
-%     end
-
-  %memory_efficient=1;
-

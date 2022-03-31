@@ -25,9 +25,7 @@ if main_iter==1 & options.max_threads>0
 end
 
 
-%subset_nodes_for_NMI=300;
 parfor(i=1:options.independent_runs,options.max_threads)  %this is the main loop, feeding in initial conditions to start each independent run
-    %for i=1:options.independent_runs
     if options.subcluster==1
         disp(' ')
         disp(['starting independent run #' num2str(i) ' of ' num2str(options.independent_runs)])
