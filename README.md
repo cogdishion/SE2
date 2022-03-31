@@ -4,7 +4,7 @@ Instructions for clustering networks with SpeakEasy2: Champagne.
 Tested under 2018b.  Parallel toolbox not required, but helpful for large datasets.
 
 To cluster data, 
-Download SpeakEasy2: Champagne, navigate to the SpeakEasy2 folder in matlab (or put it on your matlab path) and type: <br />
+Download SpeakEasy2: Champagne (SE2), navigate to the SpeakEasy2 folder in matlab (or put it on your matlab path) and type: <br />
 load ADJdemo %at the matlab prompt to load an example network.  <br />
 Then run SpeakEasy2 by typing… <br />
 SpeakEasy2(ADJ) <br />
@@ -24,9 +24,9 @@ colormap(cmap); <br />
 
 ![example_SE2_results](https://user-images.githubusercontent.com/46224527/160920014-849a3173-c757-484d-9c93-93ac46d0c5f2.jpg)
 
-On the left you can see the randomly arranged network input to SE2, while the image on the right shows the same data arranged according to the clusters found by SE2.  You can see that nodes have been organized into groups (along the diagonal).  These have been color-coded with the ground truth communities, and you can see in most cases the original communities are received (nodes in a group tend to be the same color).
+On the left you can see the input adjacency matrix for the network input to SE2, while the image on the right shows the same data arranged according to the clusters found by SE2.  You can see that nodes have been organized into groups (along the diagonal).  These have been color-coded with the ground truth communities, and you can see in most cases the original communities are received (nodes in a group tend to be the same color).
 
-If you want to apply SE2 to some of your own data, just substitute your adjacency matrix for the ADJ from load ADJdemo.
+If you want to apply SE2 to some of your own data, just substitute your adjacency matrix for the ADJ from ADJdemo.mat.
 
 If you are interested in further customizing the application of SpeakEasy2, continue reading, but the basic function above works for many data.
 
@@ -79,5 +79,7 @@ The second output ('node_groups') lists the nodes associated with the three clus
 The third output ('convenient_order') orders nodes for convenient visualization (i.e. imagesc(ADJ(convenient_order{1},convenient_order{1}) is visually interpretable).
 
 
+Background reading -
 
+This original SpeakEasy algorithm is [described and still available.](https://www.cs.rpi.edu/~szymansk/SpeakEasy/index.html)  and results [published](https://www.nature.com/articles/srep16361).
 
