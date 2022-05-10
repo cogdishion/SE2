@@ -94,8 +94,8 @@ for main_iter=1:options.Results.subcluster   %main loop over clustering / subclu
             error('set parallel equal to desired number of threads, not just 1, which indicates a single thread');
         end
         
-        if options.multicommunity==1
-            disp('Alert - you set the multicom option equal to 1 - this will NOT enable overlapping community detection.')
+        if options.multicommunity<1
+            disp('Alert - you set the multicom option equal a value less than 1 - this will NOT enable overlapping community detection.')
             disp('If you want to do that select an integer greater than 1, equal to the # community a node may belong to')
         end
         
