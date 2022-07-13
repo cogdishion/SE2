@@ -41,7 +41,7 @@ addOptional(options,'discard_transient',3)  %disregard the first few solutions t
 %these merely affect how we do the clustering, but not the result
 addOptional(options,'max_threads',0);        %you need the parallel package for this - will create copies of the ADJ and run in parallel, so be sure you have enough memory
 addOptional(options,'memory_efficient',1); %setting to zero may improve sped on full matrices that fit in memory
-addOptional(options,'random_seed',rng(randi(10000,1)));   %for repro
+addOptional(options,'random_seed',[]);   %for repro
 addOptional(options,'autoshutdown',1); %shutsdown parpool unless you set to 0 - which yiou might want to do if doing a bunch of runs on mulitple networks
 
 %for extra output
@@ -67,7 +67,19 @@ addOptional(options,'node_confidence',0);
 %%  Call SpeakEasy to generate primary clusters (and subsequently if options.layers>1)
 parse(options,varargin{:});
 %rng(options.Results.random_seed);
-%rng(randi(10000,1))
+
+if isempty(options.Results.random_seed)
+     rng(randi(10000,1))
+         addOptional(options,'seed_set_by_user',0);
+
+else
+    rng(options.Results.random_seed)
+    addOptional(options,'seed_set_by_user',1);
+        
+end
+        parse(options,varargin{:});
+
+rand(1,5)
 for main_iter=1:options.Results.subcluster   %main loop over clustering / subclustering
     
     if main_iter==1  %only need to check ADJ characteristics once
@@ -76,7 +88,7 @@ for main_iter=1:options.Results.subcluster   %main loop over clustering / subclu
         addOptional(options,'is_ADJ_weighted',is_ADJ_weighted);
         addOptional(options,'is_ADJ_symmetric',is_ADJ_symmetric);
         parse(options,varargin{:});
-        options=options.Results;
+        options=options.Results; %for convenience
         
         if options.independent_runs*options.target_partitions>100
             disp('you probably only need max value of 100 paritions, so you may be able to reduce option.independnent runs or options.timesteps')

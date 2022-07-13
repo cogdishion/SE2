@@ -26,6 +26,11 @@ end
 
 
 parfor(i=1:options.independent_runs,options.max_threads)  %this is the main loop, feeding in initial conditions to start each independent run
+
+    if options.seed_set_by_user==1
+    rng(i,'twister')
+    end
+    
     if options.subcluster==1
         disp(' ')
         disp(['starting independent run #' num2str(i) ' of ' num2str(options.independent_runs)])
