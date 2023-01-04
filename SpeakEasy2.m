@@ -79,7 +79,7 @@ else
 end
         parse(options,varargin{:});
 
-rand(1,5)
+%rand(1,5)use to check if random_seed is working
 for main_iter=1:options.Results.subcluster   %main loop over clustering / subclustering
     
     if main_iter==1  %only need to check ADJ characteristics once

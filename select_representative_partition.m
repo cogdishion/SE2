@@ -1,12 +1,3 @@
-%%If you only want disjoint clusters, you can spare yourself the pain of
-%this function.  For disjoint output, SpeakEasy will only use the first section of this to select one of several
-%cluster partitions as the representative partition, based on the ARI betwen all pairs of clusters
-%
-%Outputs:
-%"nodes_and_partition_identifiers_hard" two column output with first column as nodeID (1:length(ADJ)) and 2nd column as numeric cluster ID
-%"nodes_and_partition_identifiers_overlapping"
-%"cell_partition"
-%"cell_partition_overlapping
 % is list of nodeID's for nodes that show up in more than one community
 %
 %Inputs:
@@ -15,9 +6,9 @@
 %"accept_multi" higher values are more stringent criterion for overlapping clusters, 1==disjoint clusters
 %secondary_labels_scores
 
-function [nodes_and_partition_identifiers_disjoint nodes_and_partition_identifiers_overlapping cell_partition cell_partition_overlapping multicom_nodes_all median_of_all_ARI]=select_representative_partition(ADJ,partitions, main_iter, secondary_labels_scores, secondary_labels_ID, subset_nodes_for_NMI,options)
+function [nodes_and_partition_identifiers_disjoint nodes_and_partition_identifiers_overlapping cell_partition cell_partition_overlapping multicom_nodes_all median_of_all_ARI]=select_representative_partition_old(ADJ,partitions, main_iter, secondary_labels_scores, secondary_labels_ID, subset_nodes_for_NMI,options)
 
-%first task is to compare all partitions and find representative one
+%%first task is to compare all partitions and find representative one
 adjustedrand_pairwise=zeros(size(partitions,2));  %holds all possible adjusted rand index comparisons of partitions
 adjustedrand_pairwise_subset=zeros(size(partitions,2));  %holds all possible adjusted rand index comparisons of partitions
 
@@ -26,14 +17,16 @@ nmi_pairwise=zeros(size(partitions,2));
 core_info = evalc('feature(''numcores'')');
 usable_cores=max([1 str2num(core_info(end-4:end-1))]);
 
+
+
 if length(ADJ)>subset_nodes_for_NMI
-    partitions_store=partitions;
+    partitions_store=partitions;  %need full info later
 %    partitions=partitions(randsample(length(ADJ),subset_nodes_for_NMI,1),:);   %     original version needs stats package
 partition_picker_idx=randperm(length(ADJ));
-partitions=partition_picker_idx(1:subset_nodes_for_NMI);
-
+partitions=partitions_store(partition_picker_idx(1:subset_nodes_for_NMI),:);
 
 end
+
 
 for i=1:size(partitions,2)  %calculate similarity of partitions
     

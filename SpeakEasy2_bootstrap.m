@@ -31,7 +31,8 @@ parfor(i=1:options.independent_runs,options.max_threads)  %this is the main loop
     rng(i,'twister')
     end
     
-    if options.subcluster==1
+   % if options.subcluster==1
+    if main_iter==1
         disp(' ')
         disp(['starting independent run #' num2str(i) ' of ' num2str(options.independent_runs)])
     end
@@ -48,12 +49,12 @@ partitionID_store=cell2mat(partitionID_store);
 
 
 
-if options.multicommunity~=1 | length(ADJ)<20000
+if options.multicommunity~=1 | length(ADJ)<20001
     
     subset_nodes_for_NMI=length(ADJ);
     
 else
-    subset_nodes_for_NMI=100;
+    subset_nodes_for_NMI=10000;
     
 end
 [partition_codes partition_codes_overlapping cell_partition cell_partition_overlapping multicom_nodes_all median_of_all_ARI]=select_representative_partition(ADJ, partitionID_store', main_iter, secondary_labels_scores, secondary_labels_ID, subset_nodes_for_NMI, options);

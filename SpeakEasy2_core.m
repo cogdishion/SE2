@@ -67,7 +67,7 @@ median_cluster_size=[]; %for each time point counts medians size of all clusters
 
 i=1; %counter for main loop, which continues until generating the target_paritions # of solution states ( aka partitions)
 while size(postintervention_state,1) < (options.target_partitions +options.discard_transient )%&&post_peak_split_counter<=  %main label updating loop
-    tic;
+%    tic;
     
     i=i+1;
     listener_history(i,:)=listener_history(i-1,:);  %most labesl in listener_history(i,:) will be updated
@@ -410,11 +410,26 @@ while size(postintervention_state,1) < (options.target_partitions +options.disca
     end  %conditions for fusion
     
     
-    timer(i)=toc;
+   % timer(i)=toc;
     
 end %end main while loop
 used_timesteps=i;
-
+dofig=0;
+if dofig==1
+figure
+    plot(record_mode)
+    hold on
+    record_mode1=find(record_mode==1);
+    scatter(record_mode1, record_mode(record_mode1),'r')
+    record_mode2=find(record_mode==2);
+    scatter(record_mode2, record_mode(record_mode2),'g')    
+    record_mode3=find(record_mode==3);
+    scatter(record_mode3, record_mode(record_mode3),'k')
+    hold off
+    figure
+    hist(record_mode,unique(record_mode))
+    pause
+end
 
 %trim off initial solutions
 postintervention_state(1:options.discard_transient,:)=[];
@@ -439,4 +454,4 @@ end
 
 
 
-max_labels_output=mean(max_labels_output);
+
