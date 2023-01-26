@@ -129,11 +129,24 @@ if options.multicommunity>1
     
 else  %for discrete clusters just load indices of each label into cells - they will be ordered for visualization later
     cell_partition={}; %get the indices of nodes which end up in the same cluster
-    for i=1:length(winning_partition_memberIDs_unq)
-        cell_partition{i,1}=find(winning_partition==winning_partition_memberIDs_unq(i));  %seems like same content as partitionID(most_similar_idx) but reordered
-    end
     
-    cell_partition_overlapping=cell_partition;
+  %  save selectstuff.mat
+    winning_partition_sorted=sortrows([[1:length(winning_partition)]' winning_partition],2);
+    cell_partition = accumarray(winning_partition_sorted(:,2),winning_partition_sorted(:,1),[],@(v){v}); % split data according to matched bins.
+%     for i=1:length(winning_partition_memberIDs_unq)
+%         cell_partition{i,1}=find(winning_partition==winning_partition_memberIDs_unq(i));  %seems like same content as partitionID(most_similar_idx) but reordered
+%     end
+%     
+%     selectC{1}
+%     cell_partition{1}
+%     selectC{2}
+%     cell_partition{2}
+% 
+%     selectC{3}
+%         cell_partition{3}
+
+    
+    cell_partition_overlapping=cell_partition;  %we still produce this output for convenience in the discrete case but it's NOT overlapping
     multicom_nodes_all=[];
 end
 

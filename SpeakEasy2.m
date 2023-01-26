@@ -25,7 +25,7 @@ options.CaseSensitive = false;
 
 %settings related to how many times SpeekEasy is applied
 addOptional(options,'filename','SpeakEasy2_results')
-addOptional(options,'independent_runs',10);   %number of completely independent initil conditions (IC's)
+addOptional(options,'independent_runs',10);   %number of completely independent initial conditions (IC's) - may need to reduce this if that same number of copies of the ADJ do not fit in memory
 addOptional(options,'subcluster',1);           %if you want to sub-cluster your primary clusters, make this 2+
 addOptional(options,'multicommunity',1)  %rename after testing... should be equal to max number of communities per node (so will be 2 or greater if you want overlapping output
 addOptional(options,'target_partitions',5);
@@ -39,10 +39,22 @@ addOptional(options,'contiguous_labels',0)  % set to 1 forces all communities to
 addOptional(options,'discard_transient',3)  %disregard the first few solutions that are not at equilibrium
 
 %these merely affect how we do the clustering, but not the result
-addOptional(options,'max_threads',0);        %you need the parallel package for this - will create copies of the ADJ and run in parallel, so be sure you have enough memory
 addOptional(options,'memory_efficient',1); %setting to zero may improve sped on full matrices that fit in memory
 addOptional(options,'random_seed',[]);   %for repro
 addOptional(options,'autoshutdown',1); %shutsdown parpool unless you set to 0 - which yiou might want to do if doing a bunch of runs on mulitple networks
+addOptional(options,'max_threads_override',0)
+parse(options,varargin{:});
+if ~isempty(ver('distcomp'))
+    num_threads_try=feature('numcores')-1;   %i you have parallel toolbox, use it
+else
+    num_threads_try=0;
+end
+
+if options.Results.max_threads_override~=0
+    num_threads_try=options.Results.max_threads_override;
+end
+
+addOptional(options,'max_threads',num_threads_try);        %do not adjust this variable - use "max_threads_override instead if you want to limit threads 
 
 %for extra output
 addOptional(options,'verbose',0);
@@ -147,7 +159,7 @@ for main_iter=1:options.Results.subcluster   %main loop over clustering / subclu
             current_nodes=partition_cells{main_iter-1}{sub_iter};  %these are the top-level Node ID's of the set of nodes we will subcluster
             
             if length(current_nodes)>options.minclust   %subcluster big clusters; used to have mean cluster density criterion to avoid subclustering a really dense cluster... reasons to do each, you could add back here if desired
-                
+              
                 %"partition_tags_temp" isn't used directly - just "partition_cells_temp" - which later defines "partition_tags"
                 [partition_tags_temp{sub_iter,1} partition_tags_temp{sub_iter,1} partition_cells_temp{sub_iter,1} partition_cells_temp{sub_iter,1} todel1 todel2 confidence_score_temp{sub_iter,1} ]=SpeakEasy2_bootstrap(ADJ(current_nodes,current_nodes),main_iter,options);
                 partition_tags_temp{sub_iter,1}(:,1)=current_nodes(partition_tags_temp{sub_iter,1}(:,1));                       %the subclusters you've found are at various locations in the full ADJ - need to adjust indexes to reflect this
