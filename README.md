@@ -1,3 +1,5 @@
+<a href="https://zenodo.org/badge/latestdoi/473346049"><img src="https://zenodo.org/badge/473346049.svg" alt="DOI"></a>
+
 Looking to cluster data or networks reliably and accurately?  Because data and networks vary so widely, we designed a method to handle a range of data without parameter tweaking. <br />
 <br />
 Instructions for clustering networks with SpeakEasy2: Champagne. 
