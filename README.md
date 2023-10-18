@@ -1,6 +1,6 @@
 <a href="https://zenodo.org/badge/latestdoi/473346049"><img src="https://zenodo.org/badge/473346049.svg" alt="DOI"></a>
 
-Looking to cluster data or networks reliably and accurately?  Because data and networks vary so widely, we designed a method to handle a range of data without parameter tweaking.  See the results of applying SpeakEasy2 to common types of biological data in our [Genome Biology articls.](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-023-03062-0).
+Looking to cluster data or networks reliably and accurately?  Because data and networks vary so widely, we designed a method to handle a range of data without parameter tweaking.  See the results of applying SpeakEasy2 to common types of biological data in our [Genome Biology article.](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-023-03062-0).
  <br />
 <br />
 Instructions for clustering networks with SpeakEasy2: Champagne. 
