@@ -42,19 +42,9 @@ addOptional(options,'discard_transient',3)  %disregard the first few solutions t
 addOptional(options,'memory_efficient',1); %setting to zero may improve sped on full matrices that fit in memory
 addOptional(options,'random_seed',[]);   %for repro
 addOptional(options,'autoshutdown',1); %shutsdown parpool unless you set to 0 - which yiou might want to do if doing a bunch of runs on mulitple networks
-addOptional(options,'max_threads_override',0)
+addOptional(options,'max_threads',0)
+
 parse(options,varargin{:});
-if ~isempty(ver('distcomp'))
-    num_threads_try=feature('numcores')-1;   %i you have parallel toolbox, use it
-else
-    num_threads_try=0;
-end
-
-if options.Results.max_threads_override~=0
-    num_threads_try=options.Results.max_threads_override;
-end
-
-addOptional(options,'max_threads',num_threads_try);        %do not adjust this variable - use "max_threads_override instead if you want to limit threads 
 
 %for extra output
 addOptional(options,'verbose',0);
@@ -115,7 +105,7 @@ for main_iter=1:options.Results.subcluster   %main loop over clustering / subclu
         end
         
         if options.max_threads==1
-            error('set parallel equal to desired number of threads, not just 1, which indicates a single thread');
+            disp('set parallel equal to desired number of threads, not just 1, which indicates a single thread');
         end
         
         if options.multicommunity<1
