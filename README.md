@@ -3,8 +3,12 @@
 Looking to cluster data or networks reliably and accurately?  Because data and networks vary so widely, we designed a method to handle a range of data without parameter tweaking.  See the results of applying SpeakEasy2 to common types of biological data in our [Genome Biology article.](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-023-03062-0).
  <br />
 <br />
-Instructions for clustering networks with SpeakEasy2: Champagne. 
-Tested under 2018b.  Parallel toolbox not required, but helpful for large datasets.
+Since publication, David Connell has created a wide range of tools through which you can conveniently access SE2 with Python, R, C++, and which can be substantially faster in certain multi-core settings, so I'd encourage you to [check that out.](https://github.com/orgs/SpeakEasy-2/repositories)
+<br />
+<br />
+
+Below are demonstrations of clustering and exploring networks networks with SpeakEasy2: Champagne. 
+Tested under matlab 2018b.  Parallel toolbox not required, but helpful for large datasets.
 
 To cluster data, 
 Download SpeakEasy2: Champagne (SE2), navigate to the SpeakEasy2 folder in matlab (or put it on your matlab path) and type: <br />
